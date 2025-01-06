@@ -1,0 +1,79 @@
+/* opmaak_groen.css */
+
+/* Algemene bodyinstellingen */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e1f8e1; /* Lichte groene achtergrond */
+  color: #2e8b57; /* Groene tekstkleur */
+  margin: 0;
+  padding: 0;
+}
+
+/* Container die alles binnen de body bevat */
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f0fff0; /* Lichte groene achtergrond voor de container */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Stijl voor de hoofdtitel */
+h1 {
+  color: #228b22; /* Donkergroene kleur voor de titel */
+  text-align: center;
+}
+
+/* Stijl voor de subkopjes */
+h2 {
+  color: #006400; /* Nog donkerder groen voor subtitels */
+}
+
+/* Stijl voor de paragrafen */
+p {
+  line-height: 1.6;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+/* Stijl voor opsommingstekens */
+ul {
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+/* Speciale stijl voor sterke (vetgedrukte) tekst */
+strong {
+  color: #006400; /* Donker groen voor de sterke tekst */
+}
+
+/* Stijl voor de links */
+a {
+  color: #228b22; /* Groene kleur voor links */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline; /* Onderstreep de link bij hover */
+}
+
+/* Stijl voor de knop */
+button {
+  background-color: #32cd32; /* Limegroene achtergrond voor de knop */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #228b22; /* Donkerder groen bij hover */
+}
