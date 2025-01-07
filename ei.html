@@ -130,7 +130,7 @@
         <button id="play-button">Play</button>
         <div class="settings">
             <label for="spawn-time">Tijd tussen eieren (seconden):</label>
-            <input type="number" id="spawn-time" min="1" max="5" value="1">
+            <input type="number" id="spawn-time" min="0.3" max="5" value="1" step="0.1">
         </div>
     </div>
 
@@ -139,8 +139,8 @@
 
     <script>
         let score = 0;
-        let eggCount = 0; // Telt hoeveel eieren er zijn gespawnd
-        let gameStarted = false; // Houdt bij of het spel gestart is
+        let eggCount = 0;
+        let gameStarted = false;
         let spawnInterval = 1000; // Tijd tussen eieren (standaard: 1 seconde)
         const errorMessage = document.querySelector('.error-message');
         const menu = document.querySelector('.menu');
@@ -151,12 +151,12 @@
 
         // Start het spel wanneer de speler op "Play" klikt
         playButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Voorkom dat de misclick-handler dit klikevent behandelt
-            spawnInterval = Math.max(1, parseInt(spawnTimeInput.value)); // Zorg ervoor dat de spawn-tijd minimaal 1 seconde is
-            menu.style.display = 'none'; // Verberg het menu
-            scoreDisplay.style.display = 'block'; // Toon de score
-            gameStarted = true; // Zet de game-status op gestart
-            gameInterval = setInterval(createEgg, spawnInterval * 1000); // Start het spel met de aangepaste spawn-tijd in milliseconden
+            event.stopPropagation();
+            spawnInterval = Math.max(0.3, parseFloat(spawnTimeInput.value)); // Zorg ervoor dat de spawn-tijd minimaal 0.3 seconden is
+            menu.style.display = 'none';
+            scoreDisplay.style.display = 'block';
+            gameStarted = true;
+            gameInterval = setInterval(createEgg, spawnInterval * 1000); // Gebruik de spawn-tijd in milliseconden
         });
 
         // Functie om een ei te maken (normaal of groen)
@@ -176,7 +176,7 @@
             // Eventlistener voor klikken
             egg.addEventListener('click', function () {
                 egg.remove();
-                score += isGreenEgg ? 3 : 1; // Groene eieren geven 3 punten
+                score += isGreenEgg ? 3 : 1;
                 updateScore();
             });
 
@@ -184,10 +184,10 @@
             setTimeout(() => {
                 egg.style.opacity = 0; // Fade-out
                 setTimeout(() => egg.remove(), 1000);
-            }, isGreenEgg ? 2000 : 3000); // Groene eieren verdwijnen na 2 seconden
+            }, isGreenEgg ? 2000 : 3000);
 
             if (isGreenEgg) {
-                eggCount = 0; // Reset teller bij een groen ei
+                eggCount = 0;
             } else {
                 eggCount++;
             }
@@ -200,7 +200,7 @@
 
         // Functie om een misclick te registreren
         function handleMisclick(event) {
-            if (!gameStarted) return; // Als het spel niet gestart is, geen misclick registreren
+            if (!gameStarted) return;
             if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return;
 
             score--;
@@ -225,7 +225,7 @@
 
         // Luister naar muisklikken buiten eieren
         document.body.addEventListener('click', function (event) {
-            handleMisclick(event); // Verwerk misclicks
+            handleMisclick(event);
         });
     </script>
 </body>
