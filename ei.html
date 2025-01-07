@@ -152,7 +152,7 @@
         // Start het spel wanneer de speler op "Play" klikt
         playButton.addEventListener('click', (event) => {
             event.stopPropagation(); // Voorkom dat de misclick-handler dit klikevent behandelt
-            spawnInterval = parseInt(spawnTimeInput.value); // Lees de spawn-tijd in seconden uit de input
+            spawnInterval = Math.max(1, parseInt(spawnTimeInput.value)); // Zorg ervoor dat de spawn-tijd minimaal 1 seconde is
             menu.style.display = 'none'; // Verberg het menu
             scoreDisplay.style.display = 'block'; // Toon de score
             gameStarted = true; // Zet de game-status op gestart
