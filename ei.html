@@ -51,8 +51,8 @@
             font-weight: bold;
             color: red;
             opacity: 0;
-            transition: opacity 0.5s;
             pointer-events: none; /* Voorkomt dat de melding interactie heeft met andere elementen */
+            transition: opacity 0.5s;
         }
     </style>
 </head>
@@ -100,9 +100,9 @@
         function showErrorMessage(event) {
             errorMessage.style.left = event.pageX + 'px';
             errorMessage.style.top = event.pageY + 'px';
-            errorMessage.classList.add('show');
+            errorMessage.style.opacity = 1;
             setTimeout(() => {
-                errorMessage.classList.remove('show');
+                errorMessage.style.opacity = 0;
             }, 2000);  // Verberg de foutmelding na 2 seconden
         }
 
