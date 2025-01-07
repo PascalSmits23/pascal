@@ -106,7 +106,7 @@
 <body>
     <div class="menu">
         <h1>Welkom bij Spinnende Eieren!</h1>
-        <button id="play-button" class="no-misclick">Play</button>
+        <button id="play-button">Play</button>
     </div>
 
     <div class="score">Score: 0</div>
@@ -115,6 +115,7 @@
     <script>
         let score = 0;
         let eggCount = 0; // Telt hoeveel eieren er zijn gespawnd
+        let gameStarted = false; // Houdt bij of het spel gestart is
         const errorMessage = document.querySelector('.error-message');
         const menu = document.querySelector('.menu');
         const playButton = document.querySelector('#play-button');
@@ -125,6 +126,7 @@
         playButton.addEventListener('click', () => {
             menu.style.display = 'none'; // Verberg het menu
             scoreDisplay.style.display = 'block'; // Toon de score
+            gameStarted = true; // Zet de game-status op gestart
             gameInterval = setInterval(createEgg, 1000); // Start het spel
         });
 
@@ -169,7 +171,9 @@
 
         // Functie om een misclick te registreren
         function handleMisclick(event) {
-            if (event.target.classList.contains('no-misclick')) return; // Klikken op "no-misclick" telt niet als misclick
+            if (!gameStarted) return; // Als het spel niet gestart is, geen misclick registreren
+            if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return;
+
             score--;
             updateScore();
             showErrorMessage(event);
@@ -192,9 +196,7 @@
 
         // Luister naar muisklikken buiten eieren
         document.body.addEventListener('click', function (event) {
-            if (!event.target.classList.contains('egg') && !event.target.classList.contains('green-egg')) {
-                handleMisclick(event);
-            }
+            handleMisclick(event); // Verwerk misclicks
         });
     </script>
 </body>
