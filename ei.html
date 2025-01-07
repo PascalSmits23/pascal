@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spinnende Eieren met Score en Misclick</title>
+    <title>Spinnende Eieren met Score en Leaderboard</title>
     <style>
         body {
             display: flex;
@@ -16,63 +16,16 @@
             overflow: hidden;
         }
 
-        .menu {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            z-index: 10;
-        }
-
-        .menu h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .menu button {
-            padding: 15px 30px;
-            font-size: 24px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin: 10px 0;
-        }
-
-        .menu button:hover {
-            background-color: #45a049;
-        }
-
-        .egg, .green-egg {
+        .egg {
+            width: 100px;
+            height: 140px;
+            background-color: #fff;
             border-radius: 50%;
             position: absolute;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             animation: spin 3s linear infinite;
             cursor: pointer;
             transition: opacity 1s ease-out;
-        }
-
-        .egg {
-            width: 100px;
-            height: 140px;
-            background-color: #fff;
-        }
-
-        .green-egg {
-            width: 80px;
-            height: 110px;
-            background-color: green;
         }
 
         @keyframes spin {
@@ -90,7 +43,6 @@
             font-size: 24px;
             font-weight: bold;
             color: #333;
-            display: none;
         }
 
         .error-message {
@@ -102,14 +54,41 @@
             pointer-events: none;
             transition: opacity 0.5s;
         }
+
+        .leaderboard {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .menu {
+            text-align: center;
+        }
+
+        .play-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .play-btn:hover {
+            background-color: darkgreen;
+        }
     </style>
 </head>
 <body>
     <div class="menu">
         <h1>Welkom bij Spinnende Eieren!</h1>
-        <button id="easy-button">Easy</button>
-        <button id="medium-button">Medium</button>
-        <button id="hard-button">Hard</button>
+        <button class="play-btn" id="playBtn">Play</button>
+        <div id="leaderboard"></div>
     </div>
 
     <div class="score">Score: 0</div>
@@ -117,87 +96,95 @@
 
     <script>
         let score = 0;
-        let eggCount = 0;
-        let gameStarted = false;
-        let spawnInterval = 1000; // Tijd tussen eieren (standaard: 1 seconde)
+        let playerName = '';
+        let spawnInterval = 1000;
         const errorMessage = document.querySelector('.error-message');
-        const menu = document.querySelector('.menu');
         const scoreDisplay = document.querySelector('.score');
-        let gameInterval;
-        let misclickEnabled = false; // Variabele om misclicks aan/uit te zetten
+        const leaderboardDiv = document.querySelector('#leaderboard');
+        const menuDiv = document.querySelector('.menu');
 
-        // Start het spel met Easy mode
-        document.getElementById('easy-button').addEventListener('click', () => startGame(1));
-        // Start het spel met Medium mode
-        document.getElementById('medium-button').addEventListener('click', () => startGame(0.6));
-        // Start het spel met Hard mode
-        document.getElementById('hard-button').addEventListener('click', () => startGame(0.3));
-
-        // Start het spel met de gekozen moeilijkheidsgraad
-        function startGame(difficulty) {
-            spawnInterval = difficulty; // Stel de spawn-tijd in op basis van de moeilijkheidsgraad
-            menu.style.display = 'none';
-            scoreDisplay.style.display = 'block';
-            gameStarted = true;
-            misclickEnabled = true; // Zet misclicks aan als het spel is gestart
-            gameInterval = setInterval(createEgg, spawnInterval * 1000); // Gebruik de spawn-tijd in milliseconden
+        // Vraag de naam van de speler
+        function askPlayerName() {
+            playerName = prompt("Voer je naam in voor het leaderboard:");
+            if (!playerName) {
+                playerName = "Anonieme Speler";
+            }
+            showLeaderboard();
+            menuDiv.style.display = 'none';
+            startGame();
         }
 
-        // Functie om een ei te maken (normaal of groen)
-        function createEgg() {
-            const isGreenEgg = eggCount >= getRandomEggSpawnThreshold();
+        // Toon leaderboard
+        function showLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboardDiv.innerHTML = '<h2>Leaderboard:</h2>';
+            leaderboard.sort((a, b) => b.score - a.score); // Sorteer op score (hoogste bovenaan)
 
+            leaderboard.forEach((entry, index) => {
+                leaderboardDiv.innerHTML += `<p>${index + 1}. ${entry.name} - ${entry.score} punten</p>`;
+            });
+        }
+
+        // Sla score op in het leaderboard
+        function saveScore() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboard.push({ name: playerName, score: score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            if (leaderboard.length > 10) {
+                leaderboard.pop(); // Beperk tot de top 10 scores
+            }
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        }
+
+        // Functie om het spel te starten
+        function startGame() {
+            let interval = setInterval(createEgg, spawnInterval);
+
+            // Stop het spel na 30 seconden
+            setTimeout(() => {
+                clearInterval(interval);
+                saveScore();
+                showLeaderboard();
+                alert(`Spel afgelopen! Je score: ${score}`);
+                menuDiv.style.display = 'block';
+            }, 30000); // Na 30 seconden
+        }
+
+        // Functie om een nieuw ei toe te voegen
+        function createEgg() {
             const egg = document.createElement('div');
-            egg.classList.add(isGreenEgg ? 'green-egg' : 'egg');
-            
-            // Plaats het ei op een willekeurige positie
+            egg.classList.add('egg');
             egg.style.left = Math.random() * (window.innerWidth - 100) + 'px';
             egg.style.top = Math.random() * (window.innerHeight - 140) + 'px';
-
-            // Voeg het ei toe aan de body
             document.body.appendChild(egg);
 
-            // Eventlistener voor klikken
-            egg.addEventListener('click', function () {
+            egg.addEventListener('click', () => {
                 egg.remove();
-                score += isGreenEgg ? 3 : 1;
+                score++;
                 updateScore();
             });
 
-            // Laat het ei na 3 seconden verdwijnen
             setTimeout(() => {
-                egg.style.opacity = 0; // Fade-out
-                setTimeout(() => egg.remove(), 1000);
-            }, isGreenEgg ? 2000 : 3000);
-
-            if (isGreenEgg) {
-                eggCount = 0;
-            } else {
-                eggCount++;
-            }
+                egg.style.opacity = 0;
+                setTimeout(() => {
+                    egg.remove();
+                }, 1000);
+            }, 3000);
         }
 
-        // Functie om de score bij te werken
+        // Score bijwerken
         function updateScore() {
-            document.querySelector('.score').textContent = `Score: ${score}`;
+            scoreDisplay.textContent = `Score: ${score}`;
         }
 
-        // Functie voor willekeurig spawn-interval voor groene eieren
-        function getRandomEggSpawnThreshold() {
-            return Math.floor(Math.random() * (7 - 3 + 1)) + 3;
-        }
-
-        // Functie voor het afhandelen van een misclick
+        // Handle misklik
         function handleMisclick(event) {
-            if (!gameStarted || !misclickEnabled) return; // Zorg ervoor dat misclicks alleen na het starten van het spel werken
-            if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return; // Negeer klikken op eieren
-
             score--;
             updateScore();
             showErrorMessage(event);
         }
 
-        // Functie om de foutmelding te tonen
+        // Foutmelding tonen
         function showErrorMessage(event) {
             errorMessage.style.left = event.pageX + 'px';
             errorMessage.style.top = event.pageY + 'px';
@@ -207,12 +194,13 @@
             }, 2000);
         }
 
-        // Zet de eventlistener voor misclick pas aan als het spel is gestart
-        document.body.addEventListener('click', function (event) {
-            if (gameStarted && misclickEnabled) {
-                handleMisclick(event);
-            }
-        });
+        // Speel het spel
+        document.getElementById('playBtn').addEventListener('click', askPlayerName);
+
+        // Start het spel wanneer op Play wordt gedrukt
+        window.onload = () => {
+            showLeaderboard();
+        };
     </script>
 </body>
 </html>
