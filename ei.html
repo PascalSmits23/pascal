@@ -152,11 +152,11 @@
         // Start het spel wanneer de speler op "Play" klikt
         playButton.addEventListener('click', (event) => {
             event.stopPropagation(); // Voorkom dat de misclick-handler dit klikevent behandelt
-            spawnInterval = parseInt(spawnTimeInput.value) * 1000; // Lees de spawn-tijd uit de input en converteer naar milliseconden
+            spawnInterval = parseInt(spawnTimeInput.value); // Lees de spawn-tijd in seconden uit de input
             menu.style.display = 'none'; // Verberg het menu
             scoreDisplay.style.display = 'block'; // Toon de score
             gameStarted = true; // Zet de game-status op gestart
-            gameInterval = setInterval(createEgg, spawnInterval); // Start het spel met de aangepaste spawn-tijd
+            gameInterval = setInterval(createEgg, spawnInterval * 1000); // Start het spel met de aangepaste spawn-tijd in milliseconden
         });
 
         // Functie om een ei te maken (normaal of groen)
