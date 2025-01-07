@@ -25,6 +25,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             animation: spin 3s linear infinite;
             cursor: pointer;
+            transition: opacity 1s ease-out; /* Voeg fade-out effect toe */
         }
 
         /* Spinning effect */
@@ -82,6 +83,14 @@
                 score++;  // Verhoog de score
                 updateScore();  // Werk de score bij
             });
+
+            // Laat het ei vervagen na 3 seconden
+            setTimeout(() => {
+                egg.style.opacity = 0;  // Vervagen van het ei
+                setTimeout(() => {
+                    egg.remove();  // Verwijder het ei nadat het is vervaagd
+                }, 1000);  // Wacht 1 seconde voor de verwijdering
+            }, 3000);  // Na 3 seconden vervagen
         }
 
         // Functie om de score bij te werken
