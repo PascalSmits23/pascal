@@ -187,17 +187,17 @@
             return Math.floor(Math.random() * (7 - 3 + 1)) + 3;
         }
 
-        // Functie om een misclick te registreren
+        // Functie voor het afhandelen van een misclick
         function handleMisclick(event) {
-            if (!gameStarted || !misclickEnabled) return; // Controleer of misclicks aan staan en het spel is gestart
-            if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return;
+            if (!gameStarted || !misclickEnabled) return; // Zorg ervoor dat misclicks alleen na het starten van het spel werken
+            if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return; // Negeer klikken op eieren
 
             score--;
             updateScore();
             showErrorMessage(event);
         }
 
-        // Toon foutmelding
+        // Functie om de foutmelding te tonen
         function showErrorMessage(event) {
             errorMessage.style.left = event.pageX + 'px';
             errorMessage.style.top = event.pageY + 'px';
@@ -207,7 +207,7 @@
             }, 2000);
         }
 
-        // Luister naar muisklikken buiten eieren, maar alleen na het starten van het spel
+        // Zet de eventlistener voor misclick pas aan als het spel is gestart
         document.body.addEventListener('click', function (event) {
             if (gameStarted) {
                 handleMisclick(event);
