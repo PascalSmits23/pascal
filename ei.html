@@ -209,7 +209,9 @@
 
         // Luister naar muisklikken buiten eieren, maar alleen na het starten van het spel
         document.body.addEventListener('click', function (event) {
-            handleMisclick(event);
+            if (gameStarted) {
+                handleMisclick(event);
+            }
         });
     </script>
 </body>
