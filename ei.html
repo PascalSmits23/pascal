@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spinnende Eieren</title>
+    <title>Spinnende Eieren met Score</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
             background-color: #f4f4f4;
@@ -35,10 +36,22 @@
                 transform: rotate(360deg);
             }
         }
+
+        .score {
+            position: fixed;
+            bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
+    <div class="score">Score: 0</div>
+
     <script>
+        let score = 0;  // Score bijhouden
+
         // Functie om een nieuw ei toe te voegen op een willekeurige plek
         function createEgg() {
             const egg = document.createElement('div');
@@ -51,10 +64,17 @@
             // Voeg het ei toe aan de body
             document.body.appendChild(egg);
             
-            // Verwijder het ei als erop geklikt wordt
+            // Verwijder het ei en verhoog de score als erop geklikt wordt
             egg.addEventListener('click', function() {
-                egg.remove();
+                egg.remove();  // Verwijder het ei
+                score++;  // Verhoog de score
+                updateScore();  // Werk de score bij
             });
+        }
+
+        // Functie om de score bij te werken
+        function updateScore() {
+            document.querySelector('.score').textContent = `Score: ${score}`;
         }
 
         // Voeg elke 1 seconde een nieuw ei toe
