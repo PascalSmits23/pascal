@@ -124,6 +124,7 @@
         const menu = document.querySelector('.menu');
         const scoreDisplay = document.querySelector('.score');
         let gameInterval;
+        let misclickEnabled = false; // Variabele om misclicks aan/uit te zetten
 
         // Start het spel met Easy mode
         document.getElementById('easy-button').addEventListener('click', () => startGame(1));
@@ -138,6 +139,7 @@
             menu.style.display = 'none';
             scoreDisplay.style.display = 'block';
             gameStarted = true;
+            misclickEnabled = true; // Zet misclicks aan als het spel is gestart
             gameInterval = setInterval(createEgg, spawnInterval * 1000); // Gebruik de spawn-tijd in milliseconden
         }
 
@@ -187,7 +189,7 @@
 
         // Functie om een misclick te registreren
         function handleMisclick(event) {
-            if (!gameStarted) return;
+            if (!gameStarted || !misclickEnabled) return; // Controleer of misclicks aan staan en het spel is gestart
             if (event.target.classList.contains('egg') || event.target.classList.contains('green-egg')) return;
 
             score--;
@@ -205,7 +207,7 @@
             }, 2000);
         }
 
-        // Luister naar muisklikken buiten eieren
+        // Luister naar muisklikken buiten eieren, maar alleen na het starten van het spel
         document.body.addEventListener('click', function (event) {
             handleMisclick(event);
         });
