@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spinnend Ei</title>
+    <title>Spinnende Eieren</title>
     <style>
         body {
             display: flex;
@@ -12,6 +12,7 @@
             height: 100vh;
             margin: 0;
             background-color: #f4f4f4;
+            overflow: hidden;
         }
 
         .egg {
@@ -19,9 +20,10 @@
             height: 140px;
             background-color: #fff;
             border-radius: 50%;
-            position: relative;
+            position: absolute;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             animation: spin 3s linear infinite;
+            cursor: pointer;
         }
 
         /* Spinning effect */
@@ -36,6 +38,27 @@
     </style>
 </head>
 <body>
-    <div class="egg"></div>
+    <script>
+        // Functie om een nieuw ei toe te voegen op een willekeurige plek
+        function createEgg() {
+            const egg = document.createElement('div');
+            egg.classList.add('egg');
+            
+            // Plaats het ei op een willekeurige positie op het scherm
+            egg.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            egg.style.top = Math.random() * (window.innerHeight - 140) + 'px';
+            
+            // Voeg het ei toe aan de body
+            document.body.appendChild(egg);
+            
+            // Verwijder het ei als erop geklikt wordt
+            egg.addEventListener('click', function() {
+                egg.remove();
+            });
+        }
+
+        // Voeg elke 1 seconde een nieuw ei toe
+        setInterval(createEgg, 1000);
+    </script>
 </body>
 </html>
