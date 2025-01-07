@@ -69,7 +69,7 @@
             text-align: center;
         }
 
-        .play-btn {
+        .play-btn, .easy-btn, .medium-btn, .hard-btn {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: green;
@@ -79,7 +79,7 @@
             cursor: pointer;
         }
 
-        .play-btn:hover {
+        .play-btn:hover, .easy-btn:hover, .medium-btn:hover, .hard-btn:hover {
             background-color: darkgreen;
         }
     </style>
@@ -89,6 +89,9 @@
         <h1>Welkom bij Spinnende Eieren!</h1>
         <button class="play-btn" id="playBtn">Play</button>
         <div id="leaderboard"></div>
+        <button class="easy-btn" id="easyBtn">Easy</button>
+        <button class="medium-btn" id="mediumBtn">Medium</button>
+        <button class="hard-btn" id="hardBtn">Hard</button>
     </div>
 
     <div class="score">Score: 0</div>
@@ -102,6 +105,8 @@
         const scoreDisplay = document.querySelector('.score');
         const leaderboardDiv = document.querySelector('#leaderboard');
         const menuDiv = document.querySelector('.menu');
+        let currentEgg = null;
+        let eggsClicked = 0;  // Bijhouden van het aantal geklikte eieren
 
         // Vraag de naam van de speler
         function askPlayerName() {
@@ -111,7 +116,6 @@
             }
             showLeaderboard();
             menuDiv.style.display = 'none';
-            startGame();
         }
 
         // Toon leaderboard
@@ -123,6 +127,10 @@
             leaderboard.forEach((entry, index) => {
                 leaderboardDiv.innerHTML += `<p>${index + 1}. ${entry.name} - ${entry.score} punten</p>`;
             });
+
+            // Toon highscore
+            const highscore = localStorage.getItem('highscore') || 0;
+            leaderboardDiv.innerHTML += `<h3>Highscore: ${highscore} punten</h3>`;
         }
 
         // Sla score op in het leaderboard
@@ -134,20 +142,36 @@
                 leaderboard.pop(); // Beperk tot de top 10 scores
             }
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
+            // Sla de hoogste score op als highscore
+            const highscore = localStorage.getItem('highscore') || 0;
+            if (score > highscore) {
+                localStorage.setItem('highscore', score);
+            }
         }
 
         // Functie om het spel te starten
         function startGame() {
-            let interval = setInterval(createEgg, spawnInterval);
+            eggsClicked = 0;
+            score = 0;
+            updateScore();
+            let interval = setInterval(() => {
+                if (currentEgg === null) {
+                    createEgg();  // Spawn een nieuw ei als er nog geen ei is
+                }
+            }, spawnInterval);
 
-            // Stop het spel na 30 seconden
-            setTimeout(() => {
-                clearInterval(interval);
-                saveScore();
-                showLeaderboard();
-                alert(`Spel afgelopen! Je score: ${score}`);
-                menuDiv.style.display = 'block';
-            }, 30000); // Na 30 seconden
+            // Stop het spel na het klikken van 25 eieren
+            const gameTimer = setInterval(() => {
+                if (eggsClicked >= 25) {
+                    clearInterval(interval);
+                    clearInterval(gameTimer);
+                    saveScore();
+                    alert(`Gefeliciteerd! Je hebt 25 eieren geklikt. Je score: ${score}`);
+                    showLeaderboard();
+                    menuDiv.style.display = 'block';
+                }
+            }, 100); // Check elke 100ms of er 25 eieren geklikt zijn
         }
 
         // Functie om een nieuw ei toe te voegen
@@ -157,19 +181,23 @@
             egg.style.left = Math.random() * (window.innerWidth - 100) + 'px';
             egg.style.top = Math.random() * (window.innerHeight - 140) + 'px';
             document.body.appendChild(egg);
+            currentEgg = egg;
 
             egg.addEventListener('click', () => {
                 egg.remove();
                 score++;
+                eggsClicked++;
                 updateScore();
+                currentEgg = null;  // Reset de currentEgg zodat het volgende ei gespawnd kan worden
             });
 
             setTimeout(() => {
                 egg.style.opacity = 0;
                 setTimeout(() => {
                     egg.remove();
+                    currentEgg = null;  // Reset als het ei verdwijnt zonder geklikt te zijn
                 }, 1000);
-            }, 3000);
+            }, 3000); // Het ei verdwijnt na 3 seconden als het niet geklikt is
         }
 
         // Score bijwerken
@@ -195,7 +223,26 @@
         }
 
         // Speel het spel
-        document.getElementById('playBtn').addEventListener('click', askPlayerName);
+        document.getElementById('playBtn').addEventListener('click', () => {
+            askPlayerName();
+            menuDiv.style.display = 'none';
+        });
+
+        // Instellen van gamemodes
+        document.getElementById('easyBtn').addEventListener('click', () => {
+            spawnInterval = 1000;
+            startGame();
+        });
+
+        document.getElementById('mediumBtn').addEventListener('click', () => {
+            spawnInterval = 600;
+            startGame();
+        });
+
+        document.getElementById('hardBtn').addEventListener('click', () => {
+            spawnInterval = 300;
+            startGame();
+        });
 
         // Start het spel wanneer op Play wordt gedrukt
         window.onload = () => {
