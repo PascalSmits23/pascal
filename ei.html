@@ -209,7 +209,7 @@
 
         // Zet de eventlistener voor misclick pas aan als het spel is gestart
         document.body.addEventListener('click', function (event) {
-            if (gameStarted) {
+            if (gameStarted && misclickEnabled) {
                 handleMisclick(event);
             }
         });
