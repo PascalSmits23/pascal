@@ -106,7 +106,8 @@
         const leaderboardDiv = document.querySelector('#leaderboard');
         const menuDiv = document.querySelector('.menu');
         let currentEgg = null;
-        let eggsClicked = 0;  // Bijhouden van het aantal geklikte eieren
+        let eggsClicked = 0;
+        let currentGamemode = '';  // Om de actieve gamemode bij te houden
 
         // Vraag de naam van de speler
         function askPlayerName() {
@@ -118,7 +119,7 @@
             menuDiv.style.display = 'none';
         }
 
-        // Toon leaderboard
+        // Toon leaderboard met de juiste highscore voor de actieve gamemode
         function showLeaderboard() {
             const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
             leaderboardDiv.innerHTML = '<h2>Leaderboard:</h2>';
@@ -128,12 +129,19 @@
                 leaderboardDiv.innerHTML += `<p>${index + 1}. ${entry.name} - ${entry.score} punten</p>`;
             });
 
-            // Toon highscore
-            const highscore = localStorage.getItem('highscore') || 0;
-            leaderboardDiv.innerHTML += `<h3>Highscore: ${highscore} punten</h3>`;
+            // Toon de highscore per gamemode
+            let highscore = 0;
+            if (currentGamemode === 'easy') {
+                highscore = localStorage.getItem('easyHighscore') || 0;
+            } else if (currentGamemode === 'medium') {
+                highscore = localStorage.getItem('mediumHighscore') || 0;
+            } else if (currentGamemode === 'hard') {
+                highscore = localStorage.getItem('hardHighscore') || 0;
+            }
+            leaderboardDiv.innerHTML += `<h3>${currentGamemode.charAt(0).toUpperCase() + currentGamemode.slice(1)} Highscore: ${highscore} punten</h3>`;
         }
 
-        // Sla score op in het leaderboard
+        // Sla score op in het leaderboard en update de gamemode highscore
         function saveScore() {
             const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
             leaderboard.push({ name: playerName, score: score });
@@ -143,10 +151,22 @@
             }
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
 
-            // Sla de hoogste score op als highscore
-            const highscore = localStorage.getItem('highscore') || 0;
-            if (score > highscore) {
-                localStorage.setItem('highscore', score);
+            // Sla de hoogste score op per gamemode
+            if (currentGamemode === 'easy') {
+                const easyHighscore = localStorage.getItem('easyHighscore') || 0;
+                if (score > easyHighscore) {
+                    localStorage.setItem('easyHighscore', score);
+                }
+            } else if (currentGamemode === 'medium') {
+                const mediumHighscore = localStorage.getItem('mediumHighscore') || 0;
+                if (score > mediumHighscore) {
+                    localStorage.setItem('mediumHighscore', score);
+                }
+            } else if (currentGamemode === 'hard') {
+                const hardHighscore = localStorage.getItem('hardHighscore') || 0;
+                if (score > hardHighscore) {
+                    localStorage.setItem('hardHighscore', score);
+                }
             }
         }
 
@@ -230,16 +250,19 @@
 
         // Instellen van gamemodes
         document.getElementById('easyBtn').addEventListener('click', () => {
+            currentGamemode = 'easy';
             spawnInterval = 1000;
             startGame();
         });
 
         document.getElementById('mediumBtn').addEventListener('click', () => {
+            currentGamemode = 'medium';
             spawnInterval = 600;
             startGame();
         });
 
         document.getElementById('hardBtn').addEventListener('click', () => {
+            currentGamemode = 'hard';
             spawnInterval = 300;
             startGame();
         });
