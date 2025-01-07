@@ -46,17 +46,13 @@
         }
 
         .error-message {
-            position: fixed;
-            bottom: 60px;
+            position: absolute;
             font-size: 20px;
             font-weight: bold;
             color: red;
             opacity: 0;
             transition: opacity 0.5s;
-        }
-
-        .error-message.show {
-            opacity: 1;
+            pointer-events: none; /* Voorkomt dat de melding interactie heeft met andere elementen */
         }
     </style>
 </head>
@@ -94,18 +90,20 @@
         }
 
         // Functie om de misclick af te handelen
-        function handleMisclick() {
+        function handleMisclick(event) {
             score--;  // Verlaag de score
             updateScore();  // Werk de score bij
-            showErrorMessage();  // Toon de foutmelding
+            showErrorMessage(event);  // Toon de foutmelding op de muispositie
         }
 
-        // Functie om de foutmelding te tonen
-        function showErrorMessage() {
+        // Functie om de foutmelding te tonen op de muispositie
+        function showErrorMessage(event) {
+            errorMessage.style.left = event.pageX + 'px';
+            errorMessage.style.top = event.pageY + 'px';
             errorMessage.classList.add('show');
             setTimeout(() => {
                 errorMessage.classList.remove('show');
-            }, 1000);  // Verberg de foutmelding na 1 seconde
+            }, 2000);  // Verberg de foutmelding na 2 seconden
         }
 
         // Voeg elke 1 seconde een nieuw ei toe
@@ -114,7 +112,7 @@
         // Luister naar muisklikken buiten de eieren
         document.body.addEventListener('click', function(event) {
             if (!event.target.classList.contains('egg')) {
-                handleMisclick();  // Verlaag de score bij misklik
+                handleMisclick(event);  // Verlaag de score bij misklik
             }
         });
     </script>
