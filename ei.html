@@ -123,7 +123,8 @@
         let gameInterval;
 
         // Start het spel wanneer de speler op "Play" klikt
-        playButton.addEventListener('click', () => {
+        playButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Voorkom dat de misclick-handler dit klikevent behandelt
             menu.style.display = 'none'; // Verberg het menu
             scoreDisplay.style.display = 'block'; // Toon de score
             gameStarted = true; // Zet de game-status op gestart
