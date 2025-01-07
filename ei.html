@@ -29,8 +29,6 @@
         }
 
         .green-egg {
-            width: 80px;
-            height: 110px;
             background-color: green;
         }
 
@@ -68,65 +66,55 @@
 
     <script>
         let score = 0;
-        let eggCount = 0;
+        let eggCount = 0; // Telt hoeveel eieren er zijn gespawnd
         const errorMessage = document.querySelector('.error-message');
 
+        // Functie om een ei te maken (normaal of groen)
         function createEgg() {
+            // Kies of het een normaal ei of een groen ei wordt
+            const isGreenEgg = eggCount >= getRandomEggSpawnThreshold();
+
             const egg = document.createElement('div');
-            egg.classList.add('egg');
+            egg.classList.add(isGreenEgg ? 'green-egg' : 'egg');
+            
+            // Plaats het ei op een willekeurige positie
             egg.style.left = Math.random() * (window.innerWidth - 100) + 'px';
             egg.style.top = Math.random() * (window.innerHeight - 140) + 'px';
 
+            // Voeg het ei toe aan de body
             document.body.appendChild(egg);
 
+            // Eventlistener voor klikken
             egg.addEventListener('click', function () {
                 egg.remove();
-                score++;
+                score += isGreenEgg ? 3 : 1; // Groene eieren geven 3 punten
                 updateScore();
             });
 
+            // Laat het ei na 3 seconden verdwijnen
             setTimeout(() => {
-                egg.style.opacity = 0;
+                egg.style.opacity = 0; // Fade-out
                 setTimeout(() => egg.remove(), 1000);
-            }, 3000);
+            }, isGreenEgg ? 2000 : 3000); // Groene eieren verdwijnen na 2 seconden
 
-            eggCount++;
-            if (eggCount >= getRandomEggSpawnThreshold()) {
-                createGreenEgg();
-                eggCount = 0;
-            }
+            // Reset teller als groen ei gespawnd wordt
+            if (isGreenEgg) eggCount = 0;
+            else eggCount++;
         }
 
-        function createGreenEgg() {
-            const greenEgg = document.createElement('div');
-            greenEgg.classList.add('green-egg');
-            greenEgg.style.left = Math.random() * (window.innerWidth - 80) + 'px';
-            greenEgg.style.top = Math.random() * (window.innerHeight - 110) + 'px';
-
-            document.body.appendChild(greenEgg);
-
-            greenEgg.addEventListener('click', function () {
-                greenEgg.remove();
-                score += 3;
-                updateScore();
-            });
-
-            setTimeout(() => {
-                greenEgg.style.opacity = 0;
-                setTimeout(() => greenEgg.remove(), 1000);
-            }, 2000);
-        }
-
+        // Functie om de score bij te werken
         function updateScore() {
             document.querySelector('.score').textContent = `Score: ${score}`;
         }
 
+        // Functie om een misclick te registreren
         function handleMisclick(event) {
             score--;
             updateScore();
             showErrorMessage(event);
         }
 
+        // Toon foutmelding
         function showErrorMessage(event) {
             errorMessage.style.left = event.pageX + 'px';
             errorMessage.style.top = event.pageY + 'px';
@@ -136,12 +124,15 @@
             }, 2000);
         }
 
+        // Functie voor willekeurig spawn-interval voor groene eieren
         function getRandomEggSpawnThreshold() {
             return Math.floor(Math.random() * (7 - 3 + 1)) + 3;
         }
 
+        // Voeg elke seconde een ei toe
         setInterval(createEgg, 1000);
 
+        // Luister naar muisklikken buiten eieren
         document.body.addEventListener('click', function (event) {
             if (!event.target.classList.contains('egg') && !event.target.classList.contains('green-egg')) {
                 handleMisclick(event);
