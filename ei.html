@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spinnende Eieren met Score</title>
+    <title>Spinnende Eieren met Score en Misclick</title>
     <style>
         body {
             display: flex;
@@ -44,13 +44,29 @@
             font-weight: bold;
             color: #333;
         }
+
+        .error-message {
+            position: fixed;
+            bottom: 60px;
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
     <div class="score">Score: 0</div>
+    <div class="error-message">Mis klik! Score gaat omlaag...</div>
 
     <script>
         let score = 0;  // Score bijhouden
+        const errorMessage = document.querySelector('.error-message');
 
         // Functie om een nieuw ei toe te voegen op een willekeurige plek
         function createEgg() {
@@ -77,8 +93,30 @@
             document.querySelector('.score').textContent = `Score: ${score}`;
         }
 
+        // Functie om de misclick af te handelen
+        function handleMisclick() {
+            score--;  // Verlaag de score
+            updateScore();  // Werk de score bij
+            showErrorMessage();  // Toon de foutmelding
+        }
+
+        // Functie om de foutmelding te tonen
+        function showErrorMessage() {
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 1000);  // Verberg de foutmelding na 1 seconde
+        }
+
         // Voeg elke 1 seconde een nieuw ei toe
         setInterval(createEgg, 1000);
+
+        // Luister naar muisklikken buiten de eieren
+        document.body.addEventListener('click', function(event) {
+            if (!event.target.classList.contains('egg')) {
+                handleMisclick();  // Verlaag de score bij misklik
+            }
+        });
     </script>
 </body>
 </html>
