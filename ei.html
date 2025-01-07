@@ -16,7 +16,7 @@
             overflow: hidden;
         }
 
-        .egg {
+        .egg, .green-egg {
             width: 100px;
             height: 140px;
             background-color: #fff;
@@ -25,10 +25,15 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             animation: spin 3s linear infinite;
             cursor: pointer;
-            transition: opacity 1s ease-out; /* Voeg fade-out effect toe */
+            transition: opacity 1s ease-out;
         }
 
-        /* Spinning effect */
+        .green-egg {
+            width: 80px;
+            height: 110px;
+            background-color: green;
+        }
+
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -52,7 +57,7 @@
             font-weight: bold;
             color: red;
             opacity: 0;
-            pointer-events: none; /* Voorkomt dat de melding interactie heeft met andere elementen */
+            pointer-events: none;
             transition: opacity 0.5s;
         }
     </style>
@@ -62,66 +67,84 @@
     <div class="error-message">Mis! -1</div>
 
     <script>
-        let score = 0;  // Score bijhouden
+        let score = 0;
+        let eggCount = 0;
         const errorMessage = document.querySelector('.error-message');
 
-        // Functie om een nieuw ei toe te voegen op een willekeurige plek
         function createEgg() {
             const egg = document.createElement('div');
             egg.classList.add('egg');
-            
-            // Plaats het ei op een willekeurige positie op het scherm
             egg.style.left = Math.random() * (window.innerWidth - 100) + 'px';
             egg.style.top = Math.random() * (window.innerHeight - 140) + 'px';
-            
-            // Voeg het ei toe aan de body
+
             document.body.appendChild(egg);
-            
-            // Verwijder het ei en verhoog de score als erop geklikt wordt
-            egg.addEventListener('click', function() {
-                egg.remove();  // Verwijder het ei
-                score++;  // Verhoog de score
-                updateScore();  // Werk de score bij
+
+            egg.addEventListener('click', function () {
+                egg.remove();
+                score++;
+                updateScore();
             });
 
-            // Laat het ei vervagen na 3 seconden
             setTimeout(() => {
-                egg.style.opacity = 0;  // Vervagen van het ei
-                setTimeout(() => {
-                    egg.remove();  // Verwijder het ei nadat het is vervaagd
-                }, 1000);  // Wacht 1 seconde voor de verwijdering
-            }, 3000);  // Na 3 seconden vervagen
+                egg.style.opacity = 0;
+                setTimeout(() => egg.remove(), 1000);
+            }, 3000);
+
+            eggCount++;
+            if (eggCount >= getRandomEggSpawnThreshold()) {
+                createGreenEgg();
+                eggCount = 0;
+            }
         }
 
-        // Functie om de score bij te werken
+        function createGreenEgg() {
+            const greenEgg = document.createElement('div');
+            greenEgg.classList.add('green-egg');
+            greenEgg.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+            greenEgg.style.top = Math.random() * (window.innerHeight - 110) + 'px';
+
+            document.body.appendChild(greenEgg);
+
+            greenEgg.addEventListener('click', function () {
+                greenEgg.remove();
+                score += 3;
+                updateScore();
+            });
+
+            setTimeout(() => {
+                greenEgg.style.opacity = 0;
+                setTimeout(() => greenEgg.remove(), 1000);
+            }, 2000);
+        }
+
         function updateScore() {
             document.querySelector('.score').textContent = `Score: ${score}`;
         }
 
-        // Functie om de misclick af te handelen
         function handleMisclick(event) {
-            score--;  // Verlaag de score
-            updateScore();  // Werk de score bij
-            showErrorMessage(event);  // Toon de foutmelding op de muispositie
+            score--;
+            updateScore();
+            showErrorMessage(event);
         }
 
-        // Functie om de foutmelding te tonen op de muispositie
         function showErrorMessage(event) {
             errorMessage.style.left = event.pageX + 'px';
             errorMessage.style.top = event.pageY + 'px';
             errorMessage.style.opacity = 1;
             setTimeout(() => {
                 errorMessage.style.opacity = 0;
-            }, 2000);  // Verberg de foutmelding na 2 seconden
+            }, 2000);
         }
 
-        // Voeg elke 1 seconde een nieuw ei toe
+        function getRandomEggSpawnThreshold() {
+            return Math.floor(Math.random() * (7 - 3 + 1)) + 3;
+        }
+
         setInterval(createEgg, 1000);
 
-        // Luister naar muisklikken buiten de eieren
-        document.body.addEventListener('click', function(event) {
-            if (!event.target.classList.contains('egg')) {
-                handleMisclick(event);  // Verlaag de score bij misklik
+        document.body.addEventListener('click', function (event) {
+            if (!event.target.classList.contains('egg') && !event.target.classList.contains('green-egg')) {
+                handleMisclick(event);
             }
         });
     </script>
