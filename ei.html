@@ -106,7 +106,7 @@
 <body>
     <div class="menu">
         <h1>Welkom bij Spinnende Eieren!</h1>
-        <button id="play-button">Play</button>
+        <button id="play-button" class="no-misclick">Play</button>
     </div>
 
     <div class="score">Score: 0</div>
@@ -169,6 +169,7 @@
 
         // Functie om een misclick te registreren
         function handleMisclick(event) {
+            if (event.target.classList.contains('no-misclick')) return; // Klikken op "no-misclick" telt niet als misclick
             score--;
             updateScore();
             showErrorMessage(event);
