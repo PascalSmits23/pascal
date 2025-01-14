@@ -89,9 +89,9 @@
         <h1>Welkom bij Spinnende Eieren!</h1>
         <button class="play-btn" id="playBtn">Play</button>
         <div id="leaderboard"></div>
-        <button class="easy-btn" id="easyBtn">Easy</button>
-        <button class="medium-btn" id="mediumBtn">Medium</button>
-        <button class="hard-btn" id="hardBtn">Hard</button>
+        <button class="easy-btn" id="easyBtn" style="display: none;">Easy</button>
+        <button class="medium-btn" id="mediumBtn" style="display: none;">Medium</button>
+        <button class="hard-btn" id="hardBtn" style="display: none;">Hard</button>
     </div>
 
     <div class="score">Score: 0</div>
@@ -117,6 +117,9 @@
             }
             showLeaderboard();
             menuDiv.style.display = 'none';
+            document.querySelector('.easy-btn').style.display = 'block';
+            document.querySelector('.medium-btn').style.display = 'block';
+            document.querySelector('.hard-btn').style.display = 'block';
         }
 
         // Toon leaderboard met de juiste highscore voor de actieve gamemode
@@ -190,6 +193,9 @@
                     alert(`Gefeliciteerd! Je hebt 25 eieren geklikt. Je score: ${score}`);
                     showLeaderboard();
                     menuDiv.style.display = 'block';
+                    document.querySelector('.easy-btn').style.display = 'none';
+                    document.querySelector('.medium-btn').style.display = 'none';
+                    document.querySelector('.hard-btn').style.display = 'none';
                 }
             }, 100); // Check elke 100ms of er 25 eieren geklikt zijn
         }
@@ -225,27 +231,9 @@
             scoreDisplay.textContent = `Score: ${score}`;
         }
 
-        // Handle misklik
-        function handleMisclick(event) {
-            score--;
-            updateScore();
-            showErrorMessage(event);
-        }
-
-        // Foutmelding tonen
-        function showErrorMessage(event) {
-            errorMessage.style.left = event.pageX + 'px';
-            errorMessage.style.top = event.pageY + 'px';
-            errorMessage.style.opacity = 1;
-            setTimeout(() => {
-                errorMessage.style.opacity = 0;
-            }, 2000);
-        }
-
         // Speel het spel
         document.getElementById('playBtn').addEventListener('click', () => {
             askPlayerName();
-            menuDiv.style.display = 'none';
         });
 
         // Instellen van gamemodes
